@@ -2,11 +2,14 @@
 
 Juego::Juego() : anguloPreconfigurado(0.0f) {
 
-    // Inicializo mundo con gravedad
-    mundo = new b2World({ 0.0f, 9.8f });
+    // Inicializo gravedad
+    b2Vec2 gravedad(0.0f, 9.8f);
+
+    // Inicializo mundo físico
+    mundo = std::make_unique<b2World>(gravedad);
 
     // Creo el suelo inicial (Cuerpo Estático)
-    objetos.push_back(new Caja(mundo, { 500, 580 }, 0, 1000, 40, b2_staticBody, DARKGRAY));
+    objetos.emplace_back(std::make_unique<Caja>(mundo.get(), b2Vec2{ 500, 580 }, 0.0f, 1000.0f, 40.0f, b2_staticBody, DARKGRAY));
 
 }
 
@@ -28,7 +31,7 @@ void Juego::Actualizar() {
     if (IsKeyPressed(KEY_SPACE)) {
 
         // Se crea en la parte superior con el ángulo configurado 
-        objetos.push_back(new Caja(mundo, { 500, 50 }, anguloPreconfigurado, 50, 50, b2_dynamicBody, SKYBLUE));
+        objetos.emplace_back(std::make_unique<Caja>(mundo.get(), b2Vec2{ 500, 50 }, anguloPreconfigurado, 50.0f, 50.0f, b2_dynamicBody, SKYBLUE));
 
     }
 
@@ -40,7 +43,10 @@ void Juego::Renderizar() {
 
         ClearBackground(RAYWHITE);
 
-        for (auto obj : objetos) obj->Dibujar();
+        // Box2D calcula, Raylib dibuja el resultado visual
+        for (const auto& obj : objetos) {
+            obj->Dibujar();
+        }
 
         DrawText("Flechas: Rotar angulo inicial | ESPACIO: Crear caja", 10, 10, 20, DARKBLUE);
         DrawText(TextFormat("Angulo de creacion: %.2f rad", anguloPreconfigurado), 10, 40, 20, GRAY);
@@ -49,9 +55,4 @@ void Juego::Renderizar() {
 
 }
 
-Juego::~Juego() {
-
-    for (auto obj : objetos) delete obj;
-    delete mundo;
-
-}
+//Juego::~Juego() {}
