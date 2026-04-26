@@ -1,3 +1,9 @@
+/*
+
+MAV II - Entrega Guía Unidad 1 - Mavix despierta - Benitez María Agustina
+
+*/
+
 #ifndef NDEBUG
 #include <vld.h>
 #endif
@@ -10,8 +16,7 @@
 
 int main() {
 
-    
-
+    // Inicialización del programa
     Juego juego;
     juego.Iniciar();
 

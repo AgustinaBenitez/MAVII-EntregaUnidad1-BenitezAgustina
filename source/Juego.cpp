@@ -41,6 +41,9 @@ void Juego::Iniciar() {
     // Creo el suelo inicial (Cuerpo Estático)
     objetos.emplace_back(std::make_unique<Caja>(mundo.get(), b2Vec2{ 500, 580 }, 0.0f, 1000.0f, 40.0f, b2_staticBody, DARKGRAY));
 
+    // Cargo jugador
+    jugador.Iniciar();
+
 }
 
 void Juego::Actualizar() {
@@ -82,6 +85,9 @@ void Juego::Renderizar() {
             obj->Dibujar();
         }
 
+        //Dibujo al jugador
+        jugador.Dibujar();
+
         // Creo una "Caja Fantasma" a modo de preview
         Vector2 posPre = { 500.0f, 50.0f };
         Rectangle recPre = { posPre.x, posPre.y, anchoPre, altoPre };
@@ -93,9 +99,17 @@ void Juego::Renderizar() {
         // Dibujo la caja fantasma
         DrawRectanglePro(recPre, origenPre, gradosPre, Fade(SKYBLUE, 0.5f));        
 
+        // Muestro cartel
+        DrawText("Chell ha descubierto", 10, 10, 20, MAROON);
+        DrawText("como crear cajas fisicas...", 10, 40, 20, MAROON);
+        DrawText("Podra finalmente encontrar", 10, 70, 20, MAROON);
+        DrawText("a su cubo de compania?", 10, 100, 20, MAROON);
+
         // Muestro instrucciones
-        DrawText("Flechas: Rotar angulo inicial | Barra de espacio: Crear caja", 10, 10, 20, DARKBLUE);
-        DrawText(TextFormat("Angulo de creacion: %.2f rad", anguloPreconfigurado), 10, 40, 20, GRAY);
+        DrawText("Flechas: Rotar angulo inicial", 690, 10, 20, DARKBLUE);
+        DrawText("Barra de espacio: Crear caja", 690, 40, 20, DARKBLUE);
+        DrawText(TextFormat("Angulo de creacion: %.2f rad", anguloPreconfigurado), 690, 70, 20, GRAY);
+
 
     EndDrawing();
 

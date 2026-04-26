@@ -3,8 +3,9 @@
 #include <vector>
 #include <memory> // Para usar los Smart Pointers
 #include "Caja.h"
+#include "Jugador.h"
 
-// Declaro la clase acá para que después Juego la conozca
+// Declaro la clase acá para que después Juego la conozca --- Me ayudó Gemini porque no daba en el clavo con la implementación del sonido
 class EscuchadorColisiones : public b2ContactListener {
 
 private:
@@ -34,6 +35,9 @@ private:
     Sound sonidoGenerarCaja;
     Sound sonidoCaidaCaja;
     std::unique_ptr<EscuchadorColisiones> escuchador;
+
+    // Objeto
+    Jugador jugador;
 
 public:
 
