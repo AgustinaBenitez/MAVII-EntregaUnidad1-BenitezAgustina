@@ -1,5 +1,12 @@
 #include "Juego.h"
 
+// Implementación del escuchador
+EscuchadorColisiones::EscuchadorColisiones(Sound s) : sonidoCaidaCaja(s) {}
+
+void EscuchadorColisiones::BeginContact(b2Contact* contacto) {
+    PlaySound(sonidoCaidaCaja);
+}
+
 Juego::Juego() : anguloPreconfigurado(0.0f), anchoPre(80.0f), altoPre(50.0f) {
 
     // Inicializo gravedad
@@ -8,12 +15,37 @@ Juego::Juego() : anguloPreconfigurado(0.0f), anchoPre(80.0f), altoPre(50.0f) {
     // Inicializo mundo físico
     mundo = std::make_unique<b2World>(gravedad);
 
+}
+
+void Juego::Iniciar() {
+
+    InitWindow(1000, 600, "MAVII - Entrega Guía Unidad 1 - Benitez Agustina");
+
+    InitAudioDevice();
+
+    SetTargetFPS(60);
+
+    // Cargo música de fondo
+    musicaFondo = LoadMusicStream("assets/musicaFondo.mp3");
+    musicaFondo.looping = true;     // Para que se repita infinitamente
+    PlayMusicStream(musicaFondo);   // Le doy Play solo acá (una sola vez)
+
+    // Cargo los sonidos
+    sonidoGenerarCaja = LoadSound("assets/generarCaja.wav");
+    sonidoCaidaCaja = LoadSound("assets/caidaCaja.wav");
+
+    // Configuro el escuchador de colisiones
+    escuchador = std::make_unique<EscuchadorColisiones>(sonidoCaidaCaja);
+    mundo->SetContactListener(escuchador.get());
+
     // Creo el suelo inicial (Cuerpo Estático)
     objetos.emplace_back(std::make_unique<Caja>(mundo.get(), b2Vec2{ 500, 580 }, 0.0f, 1000.0f, 40.0f, b2_staticBody, DARKGRAY));
 
 }
 
 void Juego::Actualizar() {
+
+    UpdateMusicStream(musicaFondo); // OBLIGATORIO para que suene la música
 
     // Avanzo la simulación física
     mundo->Step(1.0f / 60.0f, 8, 3);
@@ -29,6 +61,8 @@ void Juego::Actualizar() {
 
     // Creo nueva caja dinámica al presionar ESPACIO
     if (IsKeyPressed(KEY_SPACE)) {
+
+        PlaySound(sonidoGenerarCaja);
 
         // Se crea en la parte superior con el ángulo configurado 
         objetos.emplace_back(std::make_unique<Caja>(mundo.get(), b2Vec2{ 500, 50 }, anguloPreconfigurado, anchoPre, altoPre, b2_dynamicBody, SKYBLUE));
@@ -64,5 +98,25 @@ void Juego::Renderizar() {
         DrawText(TextFormat("Angulo de creacion: %.2f rad", anguloPreconfigurado), 10, 40, 20, GRAY);
 
     EndDrawing();
+
+}
+
+Juego::~Juego() {
+
+    // Solución de Gemini al error que estaba teniendo de Dangling Pointer:
+    // Le decimos al mundo que ya no use el escuchador.
+    // Esto evita que intente acceder a memoria ya borrada.
+    if (mundo) {
+        mundo->SetContactListener(nullptr);
+    }
+
+    // Y limpiamos los objetos explícitamente AHORA.
+    // Esto fuerza a que todos los DestroyBody se ejecuten mientras el mundo sigue vivo.
+    objetos.clear();
+
+    // Descargo los recursos de Raylib
+    UnloadSound(sonidoGenerarCaja);
+    UnloadSound(sonidoCaidaCaja);
+    UnloadMusicStream(musicaFondo);
 
 }

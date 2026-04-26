@@ -10,19 +10,19 @@
 
 int main() {
 
-    InitWindow(1000, 600, "MAVII - Entrega Guía Unidad 1 - Mavix despierta - Benitez Agustina");
+    
 
-    SetTargetFPS(60);
-
-    Juego miJuego;
+    Juego juego;
+    juego.Iniciar();
 
     while (!WindowShouldClose()) {
 
-        miJuego.Actualizar();
-        miJuego.Renderizar();
+        juego.Actualizar();
+        juego.Renderizar();
 
     }
 
+    CloseAudioDevice();
     CloseWindow();
 
     return 0;
