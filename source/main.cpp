@@ -10,7 +10,7 @@
 
 int main() {
 
-    InitWindow(1000, 600, "TP Box2D - Mavix");
+    InitWindow(1000, 600, "MAVII - Entrega Guía Unidad 1 - Mavix despierta - Benitez Agustina");
 
     SetTargetFPS(60);
 

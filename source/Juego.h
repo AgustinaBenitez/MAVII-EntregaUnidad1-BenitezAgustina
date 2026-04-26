@@ -10,7 +10,9 @@ private:
     std::unique_ptr<b2World> mundo;                     // El mundo físico que va a ser el contenedor principal
     std::vector<std::unique_ptr<ObjetoFisico>> objetos; // Lista de objetos que se actualizan y dibujan
 
-    float anguloPreconfigurado;                         // El ángulo que Mavix ajusta antes de crear la caja
+    float anguloPreconfigurado; // El ángulo que Mavix ajusta antes de crear la caja
+    float anchoPre;
+    float altoPre;
 
 public:
 

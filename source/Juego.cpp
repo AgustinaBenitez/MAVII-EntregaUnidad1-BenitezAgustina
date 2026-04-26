@@ -1,6 +1,6 @@
 #include "Juego.h"
 
-Juego::Juego() : anguloPreconfigurado(0.0f) {
+Juego::Juego() : anguloPreconfigurado(0.0f), anchoPre(80.0f), altoPre(50.0f) {
 
     // Inicializo gravedad
     b2Vec2 gravedad(0.0f, 9.8f);
@@ -18,7 +18,7 @@ void Juego::Actualizar() {
     // Avanzo la simulación física
     mundo->Step(1.0f / 60.0f, 8, 3);
 
-    // Ajusto orientación antes de crear (con flechas)
+    // Ajusto orientación antes de crear caja (con flechas)
     if (IsKeyDown(KEY_LEFT)) {
         anguloPreconfigurado -= 0.05f;
     }
@@ -31,7 +31,7 @@ void Juego::Actualizar() {
     if (IsKeyPressed(KEY_SPACE)) {
 
         // Se crea en la parte superior con el ángulo configurado 
-        objetos.emplace_back(std::make_unique<Caja>(mundo.get(), b2Vec2{ 500, 50 }, anguloPreconfigurado, 50.0f, 50.0f, b2_dynamicBody, SKYBLUE));
+        objetos.emplace_back(std::make_unique<Caja>(mundo.get(), b2Vec2{ 500, 50 }, anguloPreconfigurado, anchoPre, altoPre, b2_dynamicBody, SKYBLUE));
 
     }
 
@@ -48,11 +48,21 @@ void Juego::Renderizar() {
             obj->Dibujar();
         }
 
-        DrawText("Flechas: Rotar angulo inicial | ESPACIO: Crear caja", 10, 10, 20, DARKBLUE);
+        // Creo una "Caja Fantasma" a modo de preview
+        Vector2 posPre = { 500.0f, 50.0f };
+        Rectangle recPre = { posPre.x, posPre.y, anchoPre, altoPre };
+        Vector2 origenPre = { anchoPre / 2.0f, altoPre / 2.0f };
+
+        // Convierto el ángulo de radianes a grados para Raylib
+        float gradosPre = anguloPreconfigurado * RAD2DEG;
+
+        // Dibujo la caja fantasma
+        DrawRectanglePro(recPre, origenPre, gradosPre, Fade(SKYBLUE, 0.5f));        
+
+        // Muestro instrucciones
+        DrawText("Flechas: Rotar angulo inicial | Barra de espacio: Crear caja", 10, 10, 20, DARKBLUE);
         DrawText(TextFormat("Angulo de creacion: %.2f rad", anguloPreconfigurado), 10, 40, 20, GRAY);
 
     EndDrawing();
 
 }
-
-//Juego::~Juego() {}
